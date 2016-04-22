@@ -2,7 +2,7 @@ package kr.ac.jejunu.userdao;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
 
@@ -13,7 +13,7 @@ public class UserDaoTest {
     public void get() throws SQLException, ClassNotFoundException {
 
         ApplicationContext applicationContext =
-                new AnnotationConfigApplicationContext(DaoFactory.class);
+                new GenericXmlApplicationContext("daoFactory.xml");
         UserDao userDao = (UserDao) applicationContext.getBean("userDao");
         Long id = 1L;
         String name = "현승호";
@@ -28,7 +28,7 @@ public class UserDaoTest {
     @Test
     public void add() throws SQLException, ClassNotFoundException {
         ApplicationContext applicationContext =
-                new AnnotationConfigApplicationContext(DaoFactory.class);
+                new GenericXmlApplicationContext("daoFactory.xml");
         UserDao userDao = (UserDao) applicationContext.getBean("userDao");
 
         User user = new User();
