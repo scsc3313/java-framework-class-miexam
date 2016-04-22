@@ -1,8 +1,10 @@
 package kr.ac.jejunu.userdao;
 
-import kr.ac.jejunu.userdao.statement.*;
+import kr.ac.jejunu.userdao.statement.StatementStrategy;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class UserDao {
 
@@ -12,23 +14,42 @@ public class UserDao {
         this.jdbcContext = jdbcContext;
     }
 
-    public User get(Long id) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStrategy = new GetUserStatementStrategy(id);
+    public User get(final Long id) throws ClassNotFoundException, SQLException {
+        StatementStrategy statementStrategy = new StatementStrategy() {
+            @Override
+            public PreparedStatement makeStatement(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement = connection.prepareStatement("select * from userinfo where id = ?");
+                preparedStatement.setLong(1, id);
+                return preparedStatement;
+            }
+        };
         return jdbcContext.jdbcContextWithStatementForStatementStrategyForQuery(statementStrategy);
     }
 
-    public Long add(User user) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStrategy = new AddUserStatementStrategy(user);
+    public Long add(final User user) throws ClassNotFoundException, SQLException {
+        StatementStrategy statementStrategy = new StatementStrategy() {
+            @Override
+            public PreparedStatement makeStatement(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement = connection.prepareStatement("insert into userinfo (name, password) values (?, ?)");
+                preparedStatement.setString(1, user.getName());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.executeUpdate();
+                return preparedStatement;
+            }
+        };
         return jdbcContext.jdbcContextWithStatementForStatementStrategyInsert(statementStrategy);
     }
 
     public void update(User user) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStategy = new UpdateUserStatementStrategy(user);
-        jdbcContext.jdbcContextWithStatementForStatementStrategy(statementStategy);
+        String sql = "update userinfo set name = ?, password = ? where id = ?";
+        Object[] params = {user.getName(), user.getPassword(), user.getId()};
+        jdbcContext.update(sql, params);
     }
 
     public void delete(Long id) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStategy = new DeleteUserStatementStrategy(id);
-        jdbcContext.jdbcContextWithStatementForStatementStrategy(statementStategy);
+        String sql = "delete from userinfo where id = ?";
+        Object[] params = {id};
+        jdbcContext.update(sql, params);
     }
+
 }
