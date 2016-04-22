@@ -8,9 +8,14 @@
         <constructor-arg ref="jdbcContext"/>
     </bean>
 
-    <bean id="connectionMaker" class="kr.ac.jejunu.userdao.SimpleConnectionMaker"></bean>
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost/jejunu"/>
+        <property name="username" value="root"/>
+        <property name="password" value="1234"/>
+    </bean>
 
     <bean id="jdbcContext" class="kr.ac.jejunu.userdao.JdbcContext">
-        <constructor-arg ref="connectionMaker"/>
+        <constructor-arg ref="dataSource"/>
     </bean>
 </beans>

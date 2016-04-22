@@ -2,16 +2,17 @@ package kr.ac.jejunu.userdao;
 
 import kr.ac.jejunu.userdao.statement.StatementStrategy;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JdbcContext {
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public JdbcContext(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public JdbcContext(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public User jdbcContextWithStatementForStatementStrategyForQuery(StatementStrategy statementStrategy) throws ClassNotFoundException, SQLException {
@@ -22,7 +23,7 @@ public class JdbcContext {
         try {
             //데이터는어디에?   Mysql
             //Driver Class Load
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
             // 쿼리만들고
             preparedStatement = statementStrategy.makeStatement(connection);
             // 실행
@@ -35,10 +36,6 @@ public class JdbcContext {
                 user.setName(resultSet.getString("name"));
                 user.setPassword(resultSet.getString("password"));
             }
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw e;
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -72,15 +69,12 @@ public class JdbcContext {
         PreparedStatement preparedStatement = null;
         Long id = null;
         try {
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
 
             preparedStatement = statementStrategy.makeStatement(connection);
 
             id = getLastInsertId(connection);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw e;
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -106,12 +100,9 @@ public class JdbcContext {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
             preparedStatement = statementStategy.makeStatement(connection);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw e;
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
