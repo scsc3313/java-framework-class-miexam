@@ -8,7 +8,7 @@ public class UserDao {
         //Driver Class Load
         Class.forName("com.mysql.jdbc.Driver");
         // Connection    접속정보는? localhost jeju id : jeju pw: jejupw
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/jeju", "jeju", "jejupw");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/jejunu", "root", "1234");
         // 쿼리만들고
         PreparedStatement preparedStatement = connection.prepareStatement("select * from userinfo where id = ?");
         preparedStatement.setLong(1, id);
@@ -28,4 +28,35 @@ public class UserDao {
 
         return user;
     }
+
+    public Long add(User user) throws ClassNotFoundException, SQLException {
+        //데이터는어디에?   Mysql
+        //Driver Class Load
+        Class.forName("com.mysql.jdbc.Driver");
+        // Connection    접속정보는? localhost jeju id : jeju pw: jejupw
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/jejunu", "root", "1234");
+        // 쿼리만들고
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into userinfo (name, password) values (?, ?)");
+        preparedStatement.setString(1, user.getName());
+        preparedStatement.setString(2, user.getPassword());
+        preparedStatement.executeUpdate();
+
+        Long id = getLastInsertId(connection);
+
+        preparedStatement.close();
+        connection.close();
+
+        return id;
+    }
+
+    private Long getLastInsertId(Connection conection) throws SQLException {
+        PreparedStatement lastInsertIdStatement = conection.prepareStatement("select last_insert_id()");
+        ResultSet resultSet = lastInsertIdStatement.executeQuery();
+        resultSet.next();
+        Long id = resultSet.getLong(1);
+        resultSet.close();
+        lastInsertIdStatement.close();
+        return id;
+    }
+
 }
