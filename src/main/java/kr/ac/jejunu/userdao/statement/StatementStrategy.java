@@ -1,4 +1,4 @@
-package kr.ac.jejunu.userdao;
+package kr.ac.jejunu.userdao.statement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
