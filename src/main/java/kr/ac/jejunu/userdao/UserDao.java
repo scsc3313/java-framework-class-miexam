@@ -15,11 +15,10 @@ public class UserDao {
     }
 
     public User get(final Long id) throws ClassNotFoundException, SQLException {
-        final String sql = "select * from userinfo where id = ?";
         StatementStrategy statementStrategy = new StatementStrategy() {
             @Override
             public PreparedStatement makeStatement(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                PreparedStatement preparedStatement = connection.prepareStatement("select * from userinfo where id = ?");
                 preparedStatement.setLong(1, id);
                 return preparedStatement;
             }
@@ -28,11 +27,10 @@ public class UserDao {
     }
 
     public Long add(final User user) throws ClassNotFoundException, SQLException {
-        final String sql = "insert into userinfo (name, password) values (?, ?)";
-        StatementStrategy statementStrategy = new StatementStrategy() {
+        StatementStrategy statementStrategy = new StatementStrategy(){
             @Override
             public PreparedStatement makeStatement(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                PreparedStatement preparedStatement = connection.prepareStatement("insert into userinfo (name, password) values (?, ?)");
                 preparedStatement.setString(1, user.getName());
                 preparedStatement.setString(2, user.getPassword());
                 preparedStatement.executeUpdate();
